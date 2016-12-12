@@ -1,11 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package desafiosidwall;
 
-import java.util.Scanner;
 import java.util.regex.Pattern;
 
 /**
@@ -15,7 +9,6 @@ import java.util.regex.Pattern;
 public class DesafiosIdwall {
 
     public static void main(String[] args) {
-        Scanner s = new Scanner(System.in);
         int size = 40;
         String text = "In the beginning God created the heavens and the earth. Now the earth was \n"
                 + "formless and empty, darkness was over the surface of the deep, and the Spirit of\n"

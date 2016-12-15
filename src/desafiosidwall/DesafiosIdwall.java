@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 public class DesafiosIdwall {
 
     public static void main(String[] args) {
-        int size = 40;
+        int size = 20;
         String text = "In the beginning God created the heavens and the earth. Now the earth was \n"
                 + "formless and empty, darkness was over the surface of the deep, and the Spirit of\n"
                 + "God was hovering over the waters.\n"
@@ -19,59 +19,40 @@ public class DesafiosIdwall {
                 + "\"day,\" and the darkness he called \"night.\" And there was evening, and there was\n"
                 + "morning - the first day.";
 
-        System.out.println("Break Lines:\n" + braekLines(text, size));
+        System.out.println("\nBreak Lines Words:\n" + breakLinesWords(text, size));
         System.out.println("\nJustify:\n" + justify(text, size));
 
     }
-
+    
     //Teste 1 - função para quebrar as linhas com um número específico de caracteres. 
-    public static String braekLines(String text, int size) {
-        int currentIndex = 0;
+    public static String breakLinesWords(String text, int size){
+        text = text.replaceAll("\n+|\\s+\n|\n\\s+|\\s+", " "); //remove espaços e quebras de linhas extras
+        String [] words = text.split(" "); //quebra o texto em palavras
         StringBuilder sb = new StringBuilder();
-        text = text.replaceAll("\n", " ");
-        if (text.length() < size) {
-            return text;
-        }
-
-        while ((currentIndex + size) < text.length()) { //enquanto não chegar na última linha
-            if (Character.isLetter(text.charAt(currentIndex + size)) || Character.isDigit(currentIndex + size)) { //se for uma lerta ou um dígito
-                if (Pattern.matches("\\p{Punct}", String.valueOf(text.charAt(currentIndex + size + 1)))
-                        || Character.isLetter(text.charAt(currentIndex + size + 1))
-                        || Character.isDigit(currentIndex + size)) { //se o próximo for uma letra ou um tipo de ponto ou um dígito
-                    for (int i = currentIndex + size; i > currentIndex; i--) { //retorna até encontrar um espeço em branco
-                        if (text.charAt(i) == ' ' || text.charAt(i) == '\r' || text.charAt(i) == '\n' || text.charAt(i) == '\t') {//quando encontrar quebra a linha
-                            sb.append(text.substring(currentIndex, i).trim());
-                            sb.append("\n");
-                            currentIndex = i;
-                        }
-                    }
-                } else { //caso contrário será espeço em branco, portanto quebra alinha
-                    sb.append(text.substring(currentIndex, currentIndex + size + 1).trim());
-                    sb.append("\n");
-                    currentIndex += size + 1;
-                }
-            } else { //se não for letra nem digito, quebra a linha
-                sb.append(text.substring(currentIndex, currentIndex + size).trim());
-                sb.append("\n");
-                currentIndex += size;
+        String temp = "";
+        for(int i = 0; i < words.length; i++){ //percorre todas as palavras
+            if(temp.length() + words[i].trim().length() <= size){ //verifica se a palavra cabe na linha
+                temp += words[i].trim() + " ";
+            }else{ //se não cabe, quebra a linha
+                sb.append(temp.trim() + "\n");
+                temp = words[i].trim() + " ";
             }
-
         }
-        String rest = text.substring(currentIndex, text.length()).trim();
-        sb.append(rest);
+        sb.append(temp.trim() + "\n"); //adiciona a ultima palavra
         return sb.toString();
     }
 
     //Teste 2 - função para justificar o alinhamento de cada linha contendo um número específico de caracteres 
     public static String justify(String text, int size) {
-        String brokenText = braekLines(text, size); //quebra as linhas
+        String brokenText = breakLinesWords(text, size); //quebra as linhas
         String[] lines = brokenText.split("\n");
         StringBuilder result = new StringBuilder();
 
         for (int i = 0; i < lines.length; i++) {
+            String l = lines[i];
             int whiteSpaces = lines[i].length() - lines[i].replace(" ", "").length(); //número de espaços em branco
-            int gapSpaces = (size - lines[i].length()) / whiteSpaces; //calcula o número de espaços entre cada palavra
-            int extra = (size - lines[i].length()) % whiteSpaces; //calcula o número de espaços extras que serão adicionados
+            int gapSpaces = (whiteSpaces != 0) ? (size - lines[i].length()) / whiteSpaces : 0; //calcula o número de espaços entre cada palavra
+            int extra = (whiteSpaces != 0) ? (size - lines[i].length()) % whiteSpaces : (size - lines[i].length()); //calcula o número de espaços extras que serão adicionados
             String[] words = lines[i].split(" ");
             String white = " ";
             while (gapSpaces > 0) { //cria o gap no tamanho certo
@@ -82,10 +63,12 @@ public class DesafiosIdwall {
             StringBuilder line = new StringBuilder();
             for (int j = 0; j < words.length; j++) { //adiciona as palavras e o gap
                 line.append(words[j]);
-                line.append(white);
-                if (extra > 0 && j > padding) { //adiciona os espaços extras
-                    line.append(" ");
-                    extra--;
+                if (j < words.length - 1) {
+                    line.append(white);
+                    if (extra > 0 && j > padding) { //adiciona os espaços extras
+                        line.append(" ");
+                        extra--;
+                    }
                 }
             }
             line.append("\n");
